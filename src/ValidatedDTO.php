@@ -95,23 +95,9 @@ abstract class ValidatedDTO extends SimpleDTO
         $acceptedKeys = array_keys($this->rulesList());
         $result = [];
 
-        /** @var array<Castable> $casts */
-        $casts = $this->buildCasts();
-
         foreach ($this->data as $key => $value) {
             if (in_array($key, $acceptedKeys)) {
-                if (! array_key_exists($key, $casts)) {
-                    if ($this->requireCasting) {
-                        throw new MissingCastTypeException($key);
-                    }
-                    $result[$key] = $value;
-
-                    continue;
-                }
-
-                $result[$key] = $this->shouldReturnNull($key, $value)
-                    ? null
-                    : $this->castValue($casts[$key], $key, $value);
+                $result[$key] = $value;
             }
         }
 
@@ -151,11 +137,6 @@ abstract class ValidatedDTO extends SimpleDTO
     protected function failedValidation(): void
     {
         throw new ValidationException($this->validator);
-    }
-
-    protected function shouldReturnNull(string $key, mixed $value): bool
-    {
-        return is_null($value) && $this->isOptionalProperty($key);
     }
 
     private function rulesList(): array

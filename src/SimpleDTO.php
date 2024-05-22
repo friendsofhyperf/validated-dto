@@ -213,37 +213,33 @@ abstract class SimpleDTO implements BaseDTO, CastsAttributes
         /** @var array<Castable> $casts */
         $casts = $this->buildCasts();
 
-        foreach ($this->validatedData as $key => $value) {
-            $this->{$key} = $value;
-        }
-
         $defaults = [
             ...$this->defaults(),
             ...$this->dtoDefaults,
         ];
 
         foreach ($defaults as $key => $value) {
+            $key = (string) $key;
             if (
-                ! property_exists($this, $key)
-                || ! isset($this->{$key})
+                empty($this->validatedData[$key])
+                || ! property_exists($this, $key)
             ) {
                 if (! array_key_exists($key, $casts)) {
                     if ($this->requireCasting) {
                         throw new MissingCastTypeException($key);
                     }
 
-                    $this->{$key} = $value;
                     $this->validatedData[$key] = $value;
 
                     continue;
                 }
 
-                $formatted = $this->shouldReturnNull($key, $value)
-                    ? null
-                    : $this->castValue($casts[$key], $key, $value);
-                $this->{$key} = $formatted;
-                $this->validatedData[$key] = $formatted;
+                $this->validatedData[$key] = $this->castValue($casts[$key], $key, $value);
             }
+        }
+
+        foreach ($this->validatedData as $key => $value) {
+            $this->{$key} = $value;
         }
     }
 
