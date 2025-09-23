@@ -20,6 +20,7 @@ class ConfigProvider
         return [
             'commands' => [
                 Command\MakeDTOCommand::class,
+                Command\ExportTypescriptCommand::class,
             ],
 
             'publish' => [

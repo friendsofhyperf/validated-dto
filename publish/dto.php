@@ -31,4 +31,17 @@ return [
     |
     */
     'require_casting' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | TYPESCRIPT EXPORT
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for TypeScript interface generation.
+    |
+    */
+    'typescript' => [
+        'output_path' => BASE_PATH . '/resources/typescript',
+        'filename' => 'dtos.ts',
+    ],
 ];

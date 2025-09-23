@@ -638,6 +638,120 @@ class CustomDTO extends ValidatedDTO
 }
 ```
 
+## TypeScript Export
+
+You can generate TypeScript interface definitions from your DTO classes to improve type safety in your frontend applications.
+
+### Exporting DTOs to TypeScript
+
+Use the `export:typescript` command to generate TypeScript interfaces:
+
+```shell
+php bin/hyperf.php export:typescript
+```
+
+This will scan your DTO classes and generate TypeScript interface definitions. By default, it will:
+
+- Look for DTO classes in the configured DTO namespace (default: `App\DTO`)
+- Output to `resources/typescript/dtos.ts`
+
+### Command Options
+
+You can customize the export behavior:
+
+```shell
+# Specify a custom DTO path
+php bin/hyperf.php export:typescript /path/to/dto/classes
+
+# Custom output directory and filename
+php bin/hyperf.php export:typescript --output=/path/to/output --filename=interfaces.ts
+```
+
+### Generated Output
+
+Given a DTO like this:
+
+```php
+<?php
+
+namespace App\DTO;
+
+use FriendsOfHyperf\ValidatedDTO\ValidatedDTO;
+use FriendsOfHyperf\ValidatedDTO\Casting\StringCast;
+use FriendsOfHyperf\ValidatedDTO\Casting\IntegerCast;
+use FriendsOfHyperf\ValidatedDTO\Casting\BooleanCast;
+
+class UserDTO extends ValidatedDTO
+{
+    protected function rules(): array
+    {
+        return [
+            'name' => ['required', 'string'],
+            'email' => ['required', 'email'],
+            'age' => ['integer', 'min:18'],
+            'is_active' => ['boolean'],
+        ];
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'name' => new StringCast(),
+            'email' => new StringCast(),
+            'age' => new IntegerCast(),
+            'is_active' => new BooleanCast(),
+        ];
+    }
+
+    protected function defaults(): array
+    {
+        return [
+            'is_active' => true,
+        ];
+    }
+}
+```
+
+The TypeScript export will generate:
+
+```typescript
+export interface UserInterface {
+  name: string;
+  email: string;
+  age: number;
+  is_active?: boolean; // Optional because it has a default value
+}
+```
+
+### Configuration
+
+You can configure the TypeScript export behavior in your `config/autoload/dto.php` file:
+
+```php
+return [
+    // ... other configuration
+    
+    'typescript' => [
+        'output_path' => BASE_PATH . '/resources/typescript',
+        'filename' => 'dtos.ts',
+    ],
+];
+```
+
+### Type Mapping
+
+The following PHP cast types are mapped to TypeScript types:
+
+- `StringCast` → `string`
+- `IntegerCast`, `LongCast`, `FloatCast`, `DoubleCast` → `number`
+- `BooleanCast` → `boolean`
+- `ArrayCast`, `CollectionCast` → `any[]`
+- `ObjectCast` → `object`
+- `CarbonCast`, `CarbonImmutableCast` → `string` (ISO date string)
+- `DTOCast` → The corresponding interface name
+
+Properties are marked as optional if they have default values or if their validation rules don't include `required`.
+
 ## Contact
 
 - [Twitter](https://twitter.com/huangdijia)
