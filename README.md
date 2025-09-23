@@ -749,6 +749,8 @@ The following PHP cast types are mapped to TypeScript types:
 - `ObjectCast` → `object`
 - `CarbonCast`, `CarbonImmutableCast` → `string` (ISO date string)
 - `DTOCast` → The corresponding interface name
+- `ModelCast` → `object`
+- `EnumCast` → Union type of enum values (e.g., `'active' | 'inactive'`)
 
 Properties are marked as optional if they have default values or if their validation rules don't include `required`.
 

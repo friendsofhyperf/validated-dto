@@ -22,9 +22,11 @@ use FriendsOfHyperf\ValidatedDTO\Casting\CarbonImmutableCast;
 use FriendsOfHyperf\ValidatedDTO\Casting\CollectionCast;
 use FriendsOfHyperf\ValidatedDTO\Casting\DTOCast;
 use FriendsOfHyperf\ValidatedDTO\Casting\DoubleCast;
+use FriendsOfHyperf\ValidatedDTO\Casting\EnumCast;
 use FriendsOfHyperf\ValidatedDTO\Casting\FloatCast;
 use FriendsOfHyperf\ValidatedDTO\Casting\IntegerCast;
 use FriendsOfHyperf\ValidatedDTO\Casting\LongCast;
+use FriendsOfHyperf\ValidatedDTO\Casting\ModelCast;
 use FriendsOfHyperf\ValidatedDTO\Casting\ObjectCast;
 use FriendsOfHyperf\ValidatedDTO\Casting\StringCast;
 use FriendsOfHyperf\ValidatedDTO\SimpleDTO;
@@ -45,6 +47,8 @@ class TypescriptExporter
         ArrayCast::class => 'any[]',
         CollectionCast::class => 'any[]',
         ObjectCast::class => 'object',
+        ModelCast::class => 'object', // Models are represented as objects
+        EnumCast::class => 'string', // Enums are typically represented as strings in TS
         CarbonCast::class => 'string', // ISO date string
         CarbonImmutableCast::class => 'string', // ISO date string
     ];
@@ -111,6 +115,10 @@ class TypescriptExporter
     {
         $content = file_get_contents($filePath);
         
+        if ($content === false) {
+            return null;
+        }
+        
         // Extract namespace
         if (! preg_match('/namespace\s+([^;]+);/', $content, $namespaceMatches)) {
             return null;
@@ -121,7 +129,7 @@ class TypescriptExporter
             return null;
         }
 
-        return $namespaceMatches[1] . '\\' . $classMatches[1];
+        return trim($namespaceMatches[1]) . '\\' . trim($classMatches[1]);
     }
 
     protected function isValidDtoClass(string $className): bool
@@ -289,6 +297,11 @@ class TypescriptExporter
                 return $this->getInterfaceName($dtoClass);
             }
             
+            if ($cast instanceof EnumCast) {
+                // Try to generate union type from enum cases
+                return $this->getEnumTypescriptType($cast);
+            }
+            
             return $this->typeMapping[$castClass] ?? 'any';
         }
 
@@ -355,8 +368,51 @@ class TypescriptExporter
     protected function generateFileContent(array $interfaces): string
     {
         $header = "// Generated TypeScript interfaces from DTO classes\n";
-        $header .= "// Generated at: " . date('Y-m-d H:i:s') . "\n\n";
+        $header .= "// Generated at: " . date('Y-m-d H:i:s') . "\n";
+        $header .= "// This file is auto-generated. Do not edit manually.\n\n";
         
         return $header . implode("\n\n", $interfaces) . "\n";
+    }
+
+    protected function getEnumTypescriptType(EnumCast $enumCast): string
+    {
+        try {
+            $reflection = new \ReflectionClass($enumCast);
+            $property = $reflection->getProperty('enum');
+            $property->setAccessible(true);
+            $enumClass = $property->getValue($enumCast);
+            
+            if (! class_exists($enumClass)) {
+                return 'string';
+            }
+            
+            $enumReflection = new \ReflectionClass($enumClass);
+            if (! $enumReflection->isEnum()) {
+                return 'string';
+            }
+            
+            // Get enum cases
+            $cases = $enumClass::cases();
+            $values = [];
+            
+            foreach ($cases as $case) {
+                if (method_exists($case, 'value')) {
+                    // BackedEnum - use the backing value
+                    $value = $case->value;
+                    if (is_string($value)) {
+                        $values[] = "'{$value}'";
+                    } else {
+                        $values[] = (string) $value;
+                    }
+                } else {
+                    // UnitEnum - use the case name as string
+                    $values[] = "'{$case->name}'";
+                }
+            }
+            
+            return empty($values) ? 'string' : implode(' | ', $values);
+        } catch (\Exception) {
+            return 'string';
+        }
     }
 }
