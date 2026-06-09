@@ -1,36 +1,30 @@
 # Validated DTO
 
-[中文说明](README_CN.md)
+[English](README.md)
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/friendsofhyperf/validated-dto)](https://packagist.org/packages/friendsofhyperf/validated-dto)
-[![Total Downloads](https://img.shields.io/packagist/dt/friendsofhyperf/validated-dto)](https://packagist.org/packages/friendsofhyperf/validated-dto)
-[![License](https://img.shields.io/packagist/l/friendsofhyperf/validated-dto)](https://github.com/friendsofhyperf/validated-dto)
+## 官方文档
 
-The Data Transfer Objects with validation for Hyperf applications. Forked from [laravel-validated-dto](https://github.com/WendellAdriel/laravel-validated-dto)
+[Laravel Validated DTO 官方文档](https://wendell-adriel.gitbook.io/laravel-validated-dto)
 
-## Documentation
-
-https://wendell-adriel.gitbook.io/laravel-validated-dto
-
-## Installation
+## 安装
 
 ```shell
 composer require friendsofhyperf/validated-dto
 ```
 
-## Generating DTO
+## 创建 DTO
 
-You can create `DTO` using the `gen:dto` command:
+你可以使用 `gen:dto` 命令创建 `DTO`：
 
 ```shell
 php bin/hyperf.php gen:dto UserDTO
 ```
 
-The `DTO` are going to be created inside `app/DTO`.
+`DTO` 将会被创建在 `app/DTO` 目录下。
 
-## Defining Validation Rules
+## 定义验证规则
 
-You can validate data in the same way you validate `Request` data:
+你可以像验证 `Request` 数据一样验证数据：
 
 ```php
 <?php
@@ -52,11 +46,11 @@ class UserDTO extends ValidatedDTO
 }
 ```
 
-## Creating DTO instances
+## 创建 DTO 实例
 
-You can create a `DTO` instance on many ways:
+你可以通过多种方式创建 `DTO` 实例：
 
-### From arrays
+### 从数组创建
 
 ```php
 $dto = UserDTO::fromArray([
@@ -66,13 +60,13 @@ $dto = UserDTO::fromArray([
 ]);
 ```
 
-### From JSON strings
+### 从 JSON 字符串创建
 
 ```php
 $dto = UserDTO::fromJson('{"name": "Deeka Wong", "email": "deeka@example.com", "password": "D3Crft!@1b2A"}');
 ```
 
-### From Request objects
+### 从请求对象创建
 
 ```php
 public function store(RequestInterface $request): JsonResponse
@@ -81,7 +75,7 @@ public function store(RequestInterface $request): JsonResponse
 }
 ```
 
-### From Model
+### 从模型创建
 
 ```php
 $user = new User([
@@ -93,13 +87,13 @@ $user = new User([
 $dto = UserDTO::fromModel($user);
 ```
 
-Beware that the fields in the `$hidden` property of the `Model` won't be used for the `DTO`.
+注意，模型中 `$hidden` 属性的字段不会被用于 `DTO`。
 
-### From Artisan Commands
+### 从 Artisan 命令创建
 
-You have three ways of creating a `DTO` instance from an `Artisan Command`:
+你有三种方式从 `Artisan Command` 创建 `DTO` 实例：
 
-#### From the Command Arguments
+#### 从命令参数创建
 
 ```php
 <?php
@@ -127,7 +121,7 @@ class CreateUserCommand extends Command
 }
 ```
 
-#### From the Command Options
+#### 从命令选项创建
 
 ```php
 <?php
@@ -154,7 +148,7 @@ class CreateUserCommand extends Command
 }
 ```
 
-#### From the Command Arguments and Options
+#### 从命令参数和选项创建
 
 ```php
 <?php
@@ -184,21 +178,20 @@ class CreateUserCommand extends Command
 }
 ```
 
-## Exporting DTO Types
+## 导出 DTO 类型
 
-Export a DTO class to TypeScript with `dto:export`. Pass the fully qualified DTO class name and
-optionally write the output to a file:
+使用 `dto:export` 可以将 DTO 类导出为 TypeScript。传入完整 DTO 类名，也可以指定输出文件：
 
 ```shell
 php bin/hyperf.php dto:export 'App\DTO\UserDTO'
 php bin/hyperf.php dto:export 'App\DTO\UserDTO' --output=resources/types/user.dto.ts --force
 ```
 
-The `--lang` option accepts `typescript` or `ts`.
+`--lang` 选项支持 `typescript` 或 `ts`。
 
-## Accessing DTO data
+## 访问 DTO 数据
 
-After you create your `DTO` instance, you can access any properties like an `object`:
+创建 `DTO` 实例后，你可以像访问 `object` 一样访问任何属性：
 
 ```php
 $dto = UserDTO::fromArray([
@@ -212,23 +205,22 @@ $dto->email; // 'deeka@example.com'
 $dto->password; // 'D3Crft!@1b2A'
 ```
 
-If you pass properties that are not listed in the `rules` method of your `DTO`, this data will be ignored and won't be available in your `DTO`:
+如果你传递的属性不在 `DTO` 的 `rules` 方法中，这些数据将被忽略，并且不会在 `DTO` 中可用：
 
 ```php
 $dto = UserDTO::fromArray([
     'name' => 'Deeka Wong',
     'email' => 'deeka@example.com',
     'password' => 'D3Crft!@1b2A',
-    'username' => 'john_doe', 
+    'username' => 'john_doe',
 ]);
 
-$dto->username; // THIS WON'T BE AVAILABLE IN YOUR DTO
+$dto->username; // 这个属性在 DTO 中不可用
 ```
 
-## Defining Default Values
+## 定义默认值
 
-Sometimes we can have properties that are optional and that can have default values. You can define the default values for
-your `DTO` properties in the `defaults` function:
+有时我们可能有一些可选属性，并且可以有默认值。你可以在 `defaults` 方法中定义 `DTO` 属性的默认值：
 
 ```php
 <?php
@@ -258,7 +250,7 @@ class UserDTO extends ValidatedDTO
 }
 ```
 
-With the `DTO` definition above you could run:
+使用上面的 `DTO` 定义，你可以运行：
 
 ```php
 $dto = UserDTO::fromArray([
@@ -270,11 +262,11 @@ $dto = UserDTO::fromArray([
 $dto->username; // 'deeka_wong'
 ```
 
-## Converting DTO data
+## 转换 DTO 数据
 
-You can convert your DTO to some formats:
+你可以将你的 DTO 转换为一些格式：
 
-### To array
+### 转换为数组
 
 ```php
 $dto = UserDTO::fromArray([
@@ -291,7 +283,7 @@ $dto->toArray();
 // ]
 ```
 
-### To JSON string
+### 转换为 JSON 字符串
 
 ```php
 $dto = UserDTO::fromArray([
@@ -303,7 +295,7 @@ $dto = UserDTO::fromArray([
 $dto->toJson();
 // '{"name":"Deeka Wong","email":"deeka@example.com","password":"D3Crft!@1b2A"}'
 
-$dto->toJson(true); // YOU CAN CALL IT LIKE THIS TO PRETTY PRINT YOUR JSON
+$dto->toJson(true); // 你可以这样调用它来美化打印你的 JSON
 // {
 //     "name": "Deeka Wong",
 //     "email": "deeka@example.com",
@@ -311,7 +303,7 @@ $dto->toJson(true); // YOU CAN CALL IT LIKE THIS TO PRETTY PRINT YOUR JSON
 // }
 ```
 
-### To Eloquent Model
+### 转换为 Eloquent 模型
 
 ```php
 $dto = UserDTO::fromArray([
@@ -329,33 +321,56 @@ $dto->toModel(\App\Model\User::class);
 
 ```
 
-## Customizing Error Messages, Attributes and Exceptions
+## 自定义错误消息、属性和异常
 
-You can define custom messages and attributes implementing the `messages` and `attributes` methods in your `DTO` class:
+你可以通过在 `DTO` 类中实现 `messages` 和 `attributes` 方法来定义自定义消息和属性：
 
 ```php
 /**
- * Defines the custom messages for validator errors.
+ * 定义验证器错误的自定义消息。
  */
 protected function messages() {
     return [];
 }
 
 /**
- * Defines the custom attributes for validator errors.
+ * 定义验证器错误的自定义属性。
  */
 protected function attributes() {
     return [];
 }
 ```
 
-## Type Casting
+## 自定义规则
 
-You can easily cast your DTO properties by defining a casts method in your DTO:
+你可以在 `afterValidatorResolving` 方法中添加 DTO 专用的自定义规则，也可以通过 Hyperf 的 `ValidatorFactoryResolved` 事件添加全局自定义规则。
+
+这取决于你的代码维护习惯，如果规则仅在单一 DTO 中使用，那么建议在 `afterValidatorResolving` 方法中添加，根据 `就近原则` 将会使得源码更易读。
+
+```php
+
+use Hyperf\Contract\ValidatorInterface;
+use Hyperf\Validation\Validator;
+
+protected function afterValidatorResolving(ValidatorInterface $validator): void
+{
+    if (! $validator instanceof Validator) {
+        return;
+    }
+
+    $validator->addExtension('diy_rule', function ($attribute, $value, $parameters, $validator) {
+        return $value === 'diy_rule';
+    });
+}
+```
+
+## 类型转换
+
+你可以通过在 `DTO` 中定义 `casts` 方法轻松转换你的 DTO 属性：
 
 ```php
 /**
- * Defines the type casting for the properties of the DTO.
+ * 定义 DTO 属性的类型转换。
  *
  * @return array
  */
@@ -369,11 +384,11 @@ protected function casts(): array
 }
 ```
 
-## Available Types
+## 可用类型
 
-### Array
+### 数组
 
-For JSON strings, it will convert into an array, for other types, it will wrap them in an array.
+对于 JSON 字符串，它将转换为数组，对于其他类型，它将包装在数组中。
 
 ```php
 protected function casts(): array
@@ -384,9 +399,9 @@ protected function casts(): array
 }
 ```
 
-### Boolean
+### 布尔值
 
-For string values, this uses the `filter_var` function with the `FILTER_VALIDATE_BOOLEAN` flag.
+对于字符串值，这使用 `filter_var` 函数和 `FILTER_VALIDATE_BOOLEAN` 标志。
 
 ```php
 protected function casts(): array
@@ -399,8 +414,7 @@ protected function casts(): array
 
 ### Carbon
 
-This accepts any value accepted by the `Carbon` constructor. If an invalid value is found it will throw a
-`\FriendsOfHyperf\ValidatedDTO\Exception\CastException` exception.
+这接受 `Carbon` 构造函数接受的任何值。如果发现无效值，它将抛出 `\FriendsOfHyperf\ValidatedDTO\Exception\CastException` 异常。
 
 ```php
 protected function casts(): array
@@ -411,7 +425,7 @@ protected function casts(): array
 }
 ```
 
-You can also pass a timezone when defining the cast if you need that will be used when casting the value.
+你也可以在定义转换时传递一个时区，如果需要的话，它将在转换值时使用。
 
 ```php
 protected function casts(): array
@@ -422,8 +436,7 @@ protected function casts(): array
 }
 ```
 
-You can also pass a format when defining the cast to be used to cast the value. If the property has a different format than
-the specified it will throw a `\FriendsOfHyperf\ValidatedDTO\Exception\CastException` exception.
+你也可以在定义转换时传递一个格式来用于转换值。如果属性的格式与指定的不同，它将抛出 `\FriendsOfHyperf\ValidatedDTO\Exception\CastException` 异常。
 
 ```php
 protected function casts(): array
@@ -436,8 +449,7 @@ protected function casts(): array
 
 ### CarbonImmutable
 
-This accepts any value accepted by the `CarbonImmutable` constructor. If an invalid value is found it will throw a
-`\FriendsOfHyperf\ValidatedDTO\Exception\CastException` exception.
+这接受 `CarbonImmutable` 构造函数接受的任何值。如果发现无效值，它将抛出 `\FriendsOfHyperf\ValidatedDTO\Exception\CastException` 异常。
 
 ```php
 protected function casts(): array
@@ -448,7 +460,7 @@ protected function casts(): array
 }
 ```
 
-You can also pass a timezone when defining the cast if you need that will be used when casting the value.
+你也可以在定义转换时传递一个时区，如果需要的话，它将在转换值时使用。
 
 ```php
 protected function casts(): array
@@ -459,8 +471,7 @@ protected function casts(): array
 }
 ```
 
-You can also pass a format when defining the cast to be used to cast the value. If the property has a different format than
-the specified it will throw a `\FriendsOfHyperf\ValidatedDTO\Exception\CastException` exception.
+你也可以在定义转换时传递一个格式来用于转换值。如果属性的格式与指定的不同，它将抛出 `\FriendsOfHyperf\ValidatedDTO\Exception\CastException` 异常。
 
 ```php
 protected function casts(): array
@@ -471,9 +482,9 @@ protected function casts(): array
 }
 ```
 
-### Collection
+### 集合
 
-For JSON strings, it will convert into an array first, before wrapping it into a `Collection` object.
+对于 JSON 字符串，它将首先转换为数组，然后包装到 `Collection` 对象中。
 
 ```php
 protected function casts(): array
@@ -484,8 +495,7 @@ protected function casts(): array
 }
 ```
 
-If you want to cast all the elements inside the `Collection`, you can pass a `Castable` to the `CollectionCast`
-constructor. Let's say that you want to convert all the items inside the `Collection` into integers:
+如果你想转换 `Collection` 中的所有元素，你可以将 `Castable` 传递给 `CollectionCast` 构造函数。假设你想将 `Collection` 中的所有项目转换为整数：
 
 ```php
 protected function casts(): array
@@ -496,19 +506,17 @@ protected function casts(): array
 }
 ```
 
-This works with all `Castable`, including `DTOCast` and `ModelCast` for nested data.
+这适用于所有 `Castable`，包括 `DTOCast` 和 `ModelCast` 用于嵌套数据。
 
 ### DTO
 
-This works with arrays and JSON strings. This will validate the data and also cast the data for the given DTO.
+这适用于数组和 JSON 字符串。这将验证数据并为给定的 DTO 转换数据。
 
-This will throw a `Hyperf\Validation\ValidationException` exception if the data is not valid for the DTO.
+如果数据对 DTO 无效，这将抛出 `Hyperf\Validation\ValidationException` 异常。
 
-This will throw a `FriendsOfHyperf\ValidatedDTO\Exception\CastException` exception if the property is not a valid
-array or valid JSON string.
+如果属性不是有效的数组或有效的 JSON 字符串，这将抛出 `FriendsOfHyperf\ValidatedDTO\Exception\CastException` 异常。
 
-This will throw a `FriendsOfHyperf\ValidatedDTO\Exception\CastTargetException` exception if the class passed to the
-`DTOCast` constructor is not a `ValidatedDTO` instance.
+如果传递给 `DTOCast` 构造函数的类不是 `ValidatedDTO` 实例，这将抛出 `FriendsOfHyperf\ValidatedDTO\Exception\CastTargetException` 异常。
 
 ```php
 protected function casts(): array
@@ -519,9 +527,9 @@ protected function casts(): array
 }
 ```
 
-### Float
+### 浮点数
 
-If a not numeric value is found, it will throw a `FriendsOfHyperf\ValidatedDTO\Exception\CastException` exception.
+如果发现非数字值，它将抛出 `FriendsOfHyperf\ValidatedDTO\Exception\CastException` 异常。
 
 ```php
 protected function casts(): array
@@ -532,9 +540,9 @@ protected function casts(): array
 }
 ```
 
-### Integer
+### 整数
 
-If a not numeric value is found, it will throw a `FriendsOfHyperf\ValidatedDTO\Exception\CastException` exception.
+如果发现非数字值，它将抛出 `FriendsOfHyperf\ValidatedDTO\Exception\CastException` 异常。
 
 ```php
 protected function casts(): array
@@ -545,15 +553,13 @@ protected function casts(): array
 }
 ```
 
-### Model
+### 模型
 
-This works with arrays and JSON strings.
+这适用于数组和 JSON 字符串。
 
-This will throw a `FriendsOfHyperf\ValidatedDTO\Exception\CastException` exception if the property is not a valid
-array or valid JSON string.
+如果属性不是有效的数组或有效的 JSON 字符串，这将抛出 `FriendsOfHyperf\ValidatedDTO\Exception\CastException` 异常。
 
-This will throw a `FriendsOfHyperf\ValidatedDTO\Exception\CastTargetException` exception if the class passed to the
-`ModelCast` constructor is not a `Model` instance.
+如果传递给 `ModelCast` 构造函数的类不是 `Model` 实例，这将抛出 `FriendsOfHyperf\ValidatedDTO\Exception\CastTargetException` 异常。
 
 ```php
 protected function casts(): array
@@ -564,12 +570,11 @@ protected function casts(): array
 }
 ```
 
-### Object
+### 对象
 
-This works with arrays and JSON strings.
+这适用于数组和 JSON 字符串。
 
-This will throw a `FriendsOfHyperf\ValidatedDTO\Exception\CastException` exception if the property is not a valid
-array or valid JSON string.
+如果属性不是有效的数组或有效的 JSON 字符串，这将抛出 `FriendsOfHyperf\ValidatedDTO\Exception\CastException` 异常。
 
 ```php
 protected function casts(): array
@@ -580,10 +585,9 @@ protected function casts(): array
 }
 ```
 
-### String
+### 字符串
 
-If the data can't be converted into a string, this will throw a `FriendsOfHyperf\ValidatedDTO\Exception\CastException`
-exception.
+如果数据不能转换为字符串，这将抛出 `FriendsOfHyperf\ValidatedDTO\Exception\CastException` 异常。
 
 ```php
 protected function casts(): array
@@ -594,14 +598,13 @@ protected function casts(): array
 }
 ```
 
-## Create Your Own Type Cast
+## 创建你自己的类型转换
 
-You can easily create new `Castable` types for your project by implementing the `FriendsOfHyperf\ValidatedDTO\Casting\Castable`
-interface. This interface has a single method that must be implemented:
+你可以通过实现 `FriendsOfHyperf\ValidatedDTO\Casting\Castable` 接口轻松为你的项目创建新的 `Castable` 类型。这个接口有一个必须实现的方法：
 
 ```php
 /**
- * Casts the given value.
+ * 转换给定的值。
  *
  * @param  string  $property
  * @param  mixed  $value
@@ -610,8 +613,7 @@ interface. This interface has a single method that must be implemented:
 public function cast(string $property, mixed $value): mixed;
 ```
 
-Let's say that you have a `URLWrapper` class in your project, and you want that when passing a URL into your
-`DTO` it will always return a `URLWrapper` instance instead of a simple string:
+假设你的项目中有一个 `URLWrapper` 类，并且你希望在将 URL 传递给你的 `DTO` 时，它总是返回一个 `URLWrapper` 实例而不是一个简单的字符串：
 
 ```php
 class URLCast implements Castable
@@ -628,7 +630,7 @@ class URLCast implements Castable
 }
 ```
 
-Then you could apply this to your DTO:
+然后你可以将其应用到你的 DTO：
 
 ```php
 use FriendsOfHyperf\ValidatedDTO\ValidatedDTO;
@@ -655,12 +657,3 @@ class CustomDTO extends ValidatedDTO
     }
 }
 ```
-
-## Contact
-
-- [Twitter](https://twitter.com/huangdijia)
-- [Gmail](mailto:huangdijia@gmail.com)
-
-## License
-
-[MIT](LICENSE)
